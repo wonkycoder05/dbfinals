@@ -1,174 +1,162 @@
-# database.py
-
 import mysql.connector
 
 # Database connection configuration
 db_config = {
-    'host': '127.0.0.1',        
-    'user': 'admin',     
-    'password': 'FinalTest0000!', 
-    'database': 'dbfinal'
+    'host': '127.0.0.1',
+    'user': 'admin',
+    'password': 'FinalTest0000!',
+    'database': 'vehicle_rental'
 }
 
-# Establish connection to the database
-connection = mysql.connector.connect(**db_config)
-cursor = connection.cursor()
+try:
+    # Establish connection to the database
+    connection = mysql.connector.connect(**db_config)
+    cursor = connection.cursor()
 
-def add_custdata():
-    CustID = input("Enter New Customer ID: ")
-    CustName = input("Enter Full Name: ")
-    EmailAdd = input("Enter Email: ")
-    PhoneNum = input("Enter Phone Number: ")
-    HomeAdd = input("Enter Address: ")
-    SocialSecNum = input("Enter your social security number: ")
+    def add_customer():
+        CustName = input("Enter Full Name: ")
+        EmailAdd = input("Enter Email: ")
+        PhoneNum = input("Enter Phone Number: ")
+        HomeAdd = input("Enter Address: ")
+        SocialSecNum = input("Enter your Social Security Number: ")
 
-    query = "INSERT INTO customer (CustName, PhoneNum, EmailAdd, HomeAdd, SocialSecNum) VALUES (%s, %s, %s, %s, %s)"
-    values = (CustName, PhoneNum, EmailAdd, HomeAdd, SocialSecNum)
+        query = """
+        INSERT INTO customer (CustName, PhoneNum, EmailAdd, HomeAdd, SocialSecNum)
+        VALUES (%s, %s, %s, %s, %s)
+        """
+        values = (CustName, PhoneNum, EmailAdd, HomeAdd, SocialSecNum)
 
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Customer record added!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        try:
+            cursor.execute(query, values)
+            connection.commit()
+            print("Customer record added!")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-def add_cardata():
-    PlateNum = input("Car Plate Number: ")
-    CarType = input("Enter Car Type: ")
-    CarModel = input("Enter Car Model and Name: ")
-    CarColor = input("Enter Car Color: ")
-    FuelType = input("Enter Gas, Hybrid, or Electric for Fuel: ")
-    PriceList = input("Enter Car Rental Price Per Day: ")
+    def add_vehicle():
+        VehicleID = input("Enter Vehicle ID: ")
+        PlateNum = input("Enter Car Plate Number: ")
+        VehicleType = input("Enter Car Type: ")
+        VehicleModel = input("Enter Car Model and Name: ")
+        VehicleColor = input("Enter Car Color: ")
+        FuelType = input("Enter Fuel Type (Gas, Hybrid, Electric): ")
+        PricePerDay = float(input("Enter Car Rental Price Per Day: "))
 
-    query = "INSERT INTO car (PlateNum, CarType, CarModel, CarColor, FuelType, Pricelist) VALUES (%s, %s, %s, %s, %s, %s)"
-    values = (PlateNum, CarType, CarModel, CarColor, FuelType, PriceList)
+        query = """
+        INSERT INTO vehicle (VehicleID, PlateNum, VehicleType, VehicleModel, VehicleColor, FuelType, PricePerDay)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (VehicleID, PlateNum, VehicleType, VehicleModel, VehicleColor, FuelType, PricePerDay)
 
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Car record added!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        try:
+            cursor.execute(query, values)
+            connection.commit()
+            print("Vehicle record added!")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-def add_dmg():
-    DmgID = input("New Damage ID: ")
-    CustID = input("Enter Customer ID: ")
-    PlateNum = input("Enter Plate Number: ")
-    MaintStatus = input("Maintenance Status: ")
-    DmgDone = input("Enter Damage Description: ")
-    DmgPrice = input("Enter Repair Cost: ")
+    def add_maintenance_log():
+        vehicle_VehicleID = input("Enter Vehicle ID: ")
+        PlateNum = input("Enter Plate Number: ")
+        MaintenanceType = input("Enter Maintenance Type: ")
+        MaintStatus = input("Enter Maintenance Status: ")
+        WorkshopLocation = input("Enter Workshop Location: ")
+        MaintCost = float(input("Enter Maintenance Cost: "))
 
-    query = "INSERT INTO damage (DmgID, CustID, PlateNum, MaintStatus, DmgDone, DmgPrice) VALUES (%s, %s, %s, %s, %s, %s)"
-    values = (DmgID, CustID, PlateNum, MaintStatus, DmgDone, DmgPrice)
+        query = """
+        INSERT INTO maintenancelog (vehicle_VehicleID, PlateNum, MaintenanceType, MaintStatus, WorkshopLocation, MaintCost)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        """
+        values = (vehicle_VehicleID, PlateNum, MaintenanceType, MaintStatus, WorkshopLocation, MaintCost)
 
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Damage record added!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
 
-def maintenancelog():
-    LogID = input("Enter Maintenance Log ID: ")
-    PlateNum = input("Enter Plate Number: ")
-    MaintenanceType = input("Maintenance Type: ")
-    MaintStatus = input("Maintenance Status: ")
-    WorkshopLocation = input("Input Place of Workshop: ")
-    MaintCost = input("Maintenance Cost(In Rp): ")
+        try:
+            cursor.execute(query, values)
+            connection.commit()
+            print("Maintenance log added!")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-    query = "INSERT INTO maintenance (LogID, PlateNum, MaintenanceType, MaintStatus, WorkshopLocation, MaintCost) VALUES (%s, %s, %s, %s, %s, %s)"
-    values = (LogID, PlateNum, MaintenanceType, MaintStatus, WorkshopLocation, MaintCost)
+    def add_payment():
+        # Get input from the user
+        PaymentID = input("Enter Payment ID: ").strip()
+        RentalID = input("Enter Rental ID: ").strip()
+        CustID = input("Enter Customer ID: ").strip()
+        EmployeeID = input("Enter Employee ID: ").strip()
+        AmountPaid = input("Enter Amount Paid: ").strip()
+        PaymentDate = input("Enter Payment Date (YYYY-MM-DD): ").strip()
+        PaymentMethod = input("Enter Payment Method (e.g., Credit Card, Debit Card): ").strip()
 
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Maintenance log added!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        # Validate AmountPaid (ensure it contains only digits)
+        if not AmountPaid.isdigit():
+            print("Error: Amount Paid must contain only numeric values.")
+            return
+        
+        # Insert query
+        query = """
+        INSERT INTO payment (PaymentID, AmountPaid, PaymentDate, PaymentMethod, rental_RentalID, rental_customer_CustID, rental_employee_EmployeeID)
+        VALUES (%s, %s, %s, %s, %s, %s, %s)
+        """
+        values = (PaymentID, AmountPaid, PaymentDate, PaymentMethod, rental_RentalID, rental_customer_CustID, rental_employee_EmployeeID)
 
-def add_paymentrentals():
-    PaymentID = input("Enter Payment ID: ")
-    RentalID = input("Enter Rental ID: ")
-    AmountPaid = int(input("Enter Amount Paid (In Rp): "))
-    PaymentDate = input("Enter Payment Date (YYYY-MM-DD): ")
-    PaymentMethod = input("Enter Payment Method: ")
+        try:
+            # Execute the query
+            cursor.execute(query, values)
+            connection.commit()
+            print("Payment record added successfully!")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+        finally:
+            cursor.close()
+            connection.close()
 
-    query = "INSERT INTO payment (PaymentID, RentalID, AmountPaid, PaymentDate, PaymentMethod) VALUES (%s, %s, %s, %s, %s)"
-    values = (PaymentID, RentalID, AmountPaid, PaymentDate, PaymentMethod)
+    def update_maintenance_status():
+        vehicle_VehicleID = input("Enter Vehicle ID: ")
+        new_status = input("Enter New Maintenance Status: ")
 
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Payment record added!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        query = """
+        UPDATE maintenancelog
+        SET MaintStatus = %s
+        WHERE vehicle_VehicleID = %s
+        """
+        values = (new_status, vehicle_VehicleID)
 
-def add_reservation():
-    ReservationID = input("Enter Reservation ID: ")
-    CustID = input("Enter Customer ID: ")
-    VehicleID = input("Enter Vehicle ID: ")
-    ReservationDate = input("Enter Reservation Date (YYYY-MM-DD): ")
-    StartDate = input("Enter Start Date (YYYY-MM-DD): ")
-    EndDate = input("Enter End Date (YYYY-MM-DD): ")
-    Status = input("Enter Reservation Status (or press Enter to leave it blank): ")
+        try:
+            cursor.execute(query, values)
+            connection.commit()
+            print("Maintenance status updated!")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
 
-    query = """
-    INSERT INTO reservation (ReservationID, CustID, VehicleID, ReservationDate, StartDate, EndDate, Status)
-    VALUES (%s, %s, %s, %s, %s, %s, %s)
-    """
-    values = (ReservationID, CustID, VehicleID, ReservationDate, StartDate, EndDate, Status.strip() or None)
+    while True:
+        print("\n1. Add Customer")
+        print("2. Add Vehicle")
+        print("3. Add Maintenance Log")
+        print("4. Add Payment")
+        print("5. Update Maintenance Status")
+        print("6. Exit")
+        choice = input("Enter your choice: ")
 
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Reservation record added!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
+        if choice == '1':
+            add_customer()
+        elif choice == '2':
+            add_vehicle()
+        elif choice == '3':
+            add_maintenance_log()
+        elif choice == '4':
+            add_payment()
+        elif choice == '5':
+            update_maintenance_status()
+        elif choice == '6':
+            print("Exiting... Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please choose again.")
 
-def update_maintstatus():
-    PlateNum = input("Enter Plate Number: ")
-    new_MaintStatus = input("Enter New Status: ")
-
-    query = "UPDATE maintenance SET MaintStatus = %s WHERE PlateNum = %s"
-    values = (new_MaintStatus, PlateNum)
-
-    try:
-        cursor.execute(query, values)
-        connection.commit()
-        print("Maintenance status updated!")
-    except mysql.connector.Error as err:
-        print(f"Error: {err}")
-
-while True:
-    print("\n1. Add Vehicle")
-    print("2. Add Maintenance Log")
-    print("3. Add Rental Payments")
-    print("4. Add Reservation")
-    print("5. Update Maintenance Status")
-    print("6. Add Customer Data")
-    print("7. Add Damage Done")
-    print("8. Exit")
-    choice = input("Enter your choice: ")
-
-    if choice == '1':
-        add_cardata()
-    elif choice == '2':
-        maintenancelog()
-    elif choice == '3':
-        add_paymentrentals()
-    elif choice == '4':
-        add_reservation()
-    elif choice == '5':
-        update_maintstatus()
-    elif choice == '6':
-        add_custdata()
-    elif choice == '7':
-        add_dmg()
-    elif choice == '8':   
-        break
-    else:
-        print("Invalid choice. Please choose again.")
-
-# Close cursor and connection
-cursor.close()
-connection.close()
+except mysql.connector.Error as err:
+    print(f"Error connecting to the database: {err}")
+finally:
+    if 'cursor' in locals() and cursor:
+        cursor.close()
+    if 'connection' in locals() and connection.is_connected():
+        connection.close()
